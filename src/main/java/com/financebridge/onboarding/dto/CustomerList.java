@@ -1,6 +1,5 @@
 package com.financebridge.onboarding.dto;
 
-import jakarta.persistence.Column;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,6 +8,7 @@ import lombok.Setter;
 public class CustomerList {
 
     private long Id;
-    private String name;
+    private String vornname;
+    private String nachname;
     private String email;
 }

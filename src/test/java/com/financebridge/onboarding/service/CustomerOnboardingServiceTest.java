@@ -1,6 +1,7 @@
 package com.financebridge.onboarding.service;
 
 import com.financebridge.onboarding.dto.CustomerInterestRequest;
+import com.financebridge.onboarding.entity.CustomerType;
 import com.financebridge.onboarding.repository.CustomerOutboxRepository;
 import com.financebridge.onboarding.repository.CustomerRepository;
 import org.junit.jupiter.api.Test;
@@ -24,12 +25,14 @@ class CustomerOnboardingServiceTest {
     @Test
     void customerInterest_savesCustomerAndOutboxWithSentStatus() {
         CustomerInterestRequest request = new CustomerInterestRequest();
-        request.setName("Test User");
-        request.setEMail("testuser" + System.currentTimeMillis() + "@example.com");
+        request.setVorname("Test");
+        request.setNachname("User");
+        request.setEmail("testuser" + System.currentTimeMillis() + "@example.com");
+        request.setCustomerType(String.valueOf(CustomerType.valueOf("INDIVIDUAL_CUSTOMER")));
 
         customerOnboardingService.customerInterest(request);
 
-        boolean customerExists = customerRepository.existsByEmail(request.getEMail());
+        boolean customerExists = customerRepository.existsByEmail(request.getEmail());
         assertThat(customerExists).isTrue();
 
         var outboxRecords = customerOutboxRepository.findAll();

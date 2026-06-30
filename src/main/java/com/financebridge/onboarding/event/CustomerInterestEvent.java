@@ -1,5 +1,6 @@
 package com.financebridge.onboarding.event;
 
+import com.financebridge.onboarding.entity.Anrede;
 import lombok.*;
 
 @Getter
@@ -10,7 +11,13 @@ public class CustomerInterestEvent {
 
     private String customerId;
 
-    private String customerName;
+    private String anrede;
+
+    private String customerVorName;
+
+    private String customerNachName;
+
+    private String bevorzugterName;
 
     private String  customerEmail;
 

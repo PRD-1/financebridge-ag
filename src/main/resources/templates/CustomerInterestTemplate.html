@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body style="margin:0; padding:0; background-color:#1F2937; font-family: Georgia, serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background-color:#F7F5F0; padding: 40px 0;">
+    <tr>
+        <td align="center">
+            <table width="500" cellpadding="0" cellspacing="0" style="background-color:#FFFFFF; border-radius: 12px; padding: 40px;">
+                <tr>
+                    <td align="center" style="padding-bottom: 24px;">
+                        <img src="cid:fbLogo" alt="FinanceBridge AG" width="160"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <h1 style="color:#102A43; font-size: 24px; text-align:center; margin:0 0 16px 0;">
+                            Welcome, <span th:text="${vorname}">Customer</span>!
+                        </h1>
+                        <p style="color:#1F2937; font-size: 15px; line-height: 1.6; text-align:center;">
+                            Thank you for your interest in FinanceBridge AG. We're excited to help you get started.
+                            Click the button below to begin your onboarding and complete your personal details.
+                        </p>
+                        <table width="100%" cellpadding="0" cellspacing="0" style="margin-top: 24px;">
+                            <tr>
+                                <td align="center">
+                                    <a th:href="${link}" style="background-color:#102A43; color:#FFFFFF; text-decoration:none; padding: 14px 32px; border-radius: 8px; font-size: 15px; display:inline-block;">
+                                        Begin Onboarding
+                                    </a>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

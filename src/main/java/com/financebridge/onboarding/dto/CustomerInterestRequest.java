@@ -14,9 +14,18 @@ public class CustomerInterestRequest {
 
     @NotBlank(message = "Email is required")
     @Email(message = "Invalid email")
-    String eMail;
+    String email;
 
-    @NotBlank(message = "name is required")
-    String name;
+    @NotBlank(message = "anrede is required")
+    private String anrede;
 
+
+    @NotBlank(message = "vorname is required")
+    String vorname;
+
+    @NotBlank(message = "nachname is required")
+    String nachname;
+
+    @NotBlank(message="customerType is required")
+    String customerType;
 }
