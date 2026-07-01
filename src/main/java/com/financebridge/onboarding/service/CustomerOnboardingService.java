@@ -6,6 +6,7 @@ import com.financebridge.onboarding.dto.CustomerList;
 import com.financebridge.onboarding.dto.CustomerPersonalInformationRequest;
 import com.financebridge.onboarding.entity.*;
 import com.financebridge.onboarding.event.CustomerInterestEvent;
+import com.financebridge.onboarding.jwt.FinanceBridgeJwtService;
 import com.financebridge.onboarding.repository.CustomerOutboxRepository;
 import com.financebridge.onboarding.repository.CustomerPersonalInformationRepository;
 import com.financebridge.onboarding.repository.CustomerRepository;
@@ -26,11 +27,14 @@ public class CustomerOnboardingService {
 
     private final KafkaTemplate<String, CustomerInterestEvent> kafkaTemplate;
 
-    public CustomerOnboardingService(CustomerRepository customerRepository, CustomerOutboxRepository customerOutboxRepository, CustomerPersonalInformationRepository customerPersonalInformationRepository, KafkaTemplate<String, CustomerInterestEvent> kafkaTemplate) {
+    private final FinanceBridgeJwtService financeBridgeJwtService;
+
+    public CustomerOnboardingService(CustomerRepository customerRepository, CustomerOutboxRepository customerOutboxRepository, CustomerPersonalInformationRepository customerPersonalInformationRepository, KafkaTemplate<String, CustomerInterestEvent> kafkaTemplate, FinanceBridgeJwtService financeBridgeJwtService) {
         this.customerRepository = customerRepository;
         this.customerOutboxRepository=customerOutboxRepository;
         this.customerPersonalInformationRepository = customerPersonalInformationRepository;
         this.kafkaTemplate=kafkaTemplate;
+        this.financeBridgeJwtService=financeBridgeJwtService;
     }
 
     @Transactional(rollbackFor = Exception.class, transactionManager = "chainedKafkaTransactionManager")
@@ -51,7 +55,7 @@ public class CustomerOnboardingService {
         customerOutboxEntity.setEventType("CUSTOMER_INTEREST_SUBMITTED");
         customerOutboxEntity.setEventId(UUID.randomUUID().toString());
         customerOutboxRepository.save(customerOutboxEntity);
-        CustomerInterestEvent customerInterestEvent=new CustomerInterestEvent(customerOutboxEntity.getCustomerId(), customer.getAnrede().toString(),customer.getVorname(), customer.getNachname(), null, customer.getEmail() );
+        CustomerInterestEvent customerInterestEvent=new CustomerInterestEvent(customerOutboxEntity.getCustomerId(), customer.getAnrede().toString(),customer.getVorname(), customer.getNachname(), null, customer.getEmail(), financeBridgeJwtService.generateToken(customer.getId()) );
         kafkaTemplate.send("customer-interest-submitted", customerInterestEvent);
         customerOutboxEntity.setStatus("Sent");
         return new CustomerInterestResponse("Thank you for your Interest and we received your Request and soon you will receive an Email from our side", 200);
@@ -70,7 +74,9 @@ public class CustomerOnboardingService {
     }
 
     @Transactional(rollbackFor = Exception.class, transactionManager = "chainedKafkaTransactionManager")
-    public CustomerInterestResponse savingCustomerPersonalInformation(CustomerPersonalInformationRequest customerPersonalInformationRequest, Long customerId) {
+    public CustomerInterestResponse savingCustomerPersonalInformation(CustomerPersonalInformationRequest customerPersonalInformationRequest, String token) {
+
+        Long customerId = financeBridgeJwtService.extractCustomerId(token);
 
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new IllegalArgumentException("Customer not found"));
@@ -89,7 +95,7 @@ public class CustomerOnboardingService {
         customerOutboxEntity.setEventType("CUSTOMER_INFORMATION_SUBMITTED");
         customerOutboxEntity.setEventId(UUID.randomUUID().toString());
         customerOutboxRepository.save(customerOutboxEntity);
-        CustomerInterestEvent customerInterestEvent=new CustomerInterestEvent(customerOutboxEntity.getCustomerId(), customer.getAnrede().toString(),customer.getVorname(), customer.getNachname(), customerPersonalInformation.getBevorzugterName(), customer.getEmail() );
+        CustomerInterestEvent customerInterestEvent=new CustomerInterestEvent(customerOutboxEntity.getCustomerId(), customer.getAnrede().toString(),customer.getVorname(), customer.getNachname(), customerPersonalInformation.getBevorzugterName(), customer.getEmail(), null );
         kafkaTemplate.send("customer-information-submitted", customerInterestEvent);
         customerOutboxEntity.setStatus("Sent");
         return new CustomerInterestResponse(" Your Personal Information has been saved and you'll receive soon an email with further steps", 200);

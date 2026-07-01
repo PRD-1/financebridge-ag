@@ -21,4 +21,5 @@ public class CustomerInterestEvent {
 
     private String  customerEmail;
 
+    private String token;
 }

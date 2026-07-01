@@ -27,9 +27,10 @@ public class CustomerOnboardingController {
         return ResponseEntity.ok(customerInterestResponse);
     }
 
-    @PostMapping("/financebridge/personalInformation/{customerId}")
-    public ResponseEntity<CustomerInterestResponse> customerPersonalInformation (@Valid @RequestBody CustomerPersonalInformationRequest customerPersonalInformationRequest , @PathVariable Long customerId){
-        CustomerInterestResponse customerInterestResponse = customerOnboardingService.savingCustomerPersonalInformation(customerPersonalInformationRequest,customerId);
+    @PostMapping("/financebridge/personalInformation")
+    public ResponseEntity<CustomerInterestResponse> customerPersonalInformation (@Valid @RequestBody CustomerPersonalInformationRequest customerPersonalInformationRequest , @RequestHeader("Authorization") String authHeader){
+        String token = authHeader.replace("Bearer ", "");
+        CustomerInterestResponse customerInterestResponse = customerOnboardingService.savingCustomerPersonalInformation(customerPersonalInformationRequest,token);
         return ResponseEntity.ok(customerInterestResponse);
     }
 
