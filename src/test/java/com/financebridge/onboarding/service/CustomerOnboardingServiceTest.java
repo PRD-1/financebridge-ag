@@ -1,6 +1,7 @@
 package com.financebridge.onboarding.service;
 
 import com.financebridge.onboarding.dto.CustomerInterestRequest;
+import com.financebridge.onboarding.entity.Anrede;
 import com.financebridge.onboarding.entity.CustomerType;
 import com.financebridge.onboarding.repository.CustomerOutboxRepository;
 import com.financebridge.onboarding.repository.CustomerRepository;
@@ -25,6 +26,7 @@ class CustomerOnboardingServiceTest {
     @Test
     void customerInterest_savesCustomerAndOutboxWithSentStatus() {
         CustomerInterestRequest request = new CustomerInterestRequest();
+        request.setAnrede(String.valueOf(Anrede.valueOf("HERR")));
         request.setVorname("Test");
         request.setNachname("User");
         request.setEmail("testuser" + System.currentTimeMillis() + "@example.com");

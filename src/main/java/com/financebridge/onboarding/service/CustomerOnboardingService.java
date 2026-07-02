@@ -10,6 +10,7 @@ import com.financebridge.onboarding.jwt.FinanceBridgeJwtService;
 import com.financebridge.onboarding.repository.CustomerOutboxRepository;
 import com.financebridge.onboarding.repository.CustomerPersonalInformationRepository;
 import com.financebridge.onboarding.repository.CustomerRepository;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,11 +26,12 @@ public class CustomerOnboardingService {
 
     private final CustomerPersonalInformationRepository customerPersonalInformationRepository;
 
-    private final KafkaTemplate<String, CustomerInterestEvent> kafkaTemplate;
+    @Qualifier("transactionalKafkaTemplate")
+    private final KafkaTemplate<String, Object> kafkaTemplate;
 
     private final FinanceBridgeJwtService financeBridgeJwtService;
 
-    public CustomerOnboardingService(CustomerRepository customerRepository, CustomerOutboxRepository customerOutboxRepository, CustomerPersonalInformationRepository customerPersonalInformationRepository, KafkaTemplate<String, CustomerInterestEvent> kafkaTemplate, FinanceBridgeJwtService financeBridgeJwtService) {
+    public CustomerOnboardingService(CustomerRepository customerRepository, CustomerOutboxRepository customerOutboxRepository, CustomerPersonalInformationRepository customerPersonalInformationRepository, KafkaTemplate<String, Object> kafkaTemplate, FinanceBridgeJwtService financeBridgeJwtService) {
         this.customerRepository = customerRepository;
         this.customerOutboxRepository=customerOutboxRepository;
         this.customerPersonalInformationRepository = customerPersonalInformationRepository;
